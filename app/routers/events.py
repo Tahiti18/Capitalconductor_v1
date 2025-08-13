@@ -9,8 +9,7 @@ router = APIRouter()
 @router.get("/export.csv", response_class=PlainTextResponse)
 def export_csv():
     if not engine:
-        return "type,email,project_id,ts,meta_json
-"
+        return "type,email,project_id,ts,meta_json"
     rows = []
     with engine.begin() as conn:
         res = conn.execute(text("SELECT type,email,project_id,ts,meta_json FROM events ORDER BY id DESC LIMIT 2000"))
