@@ -1,22 +1,22 @@
 
-# CapitalConductor API — GitHub + Railway Ready (Docker)
+# CapitalConductor API — Production-lite
 
-Endpoints
-- GET /health
-- POST /deck/unlock   {"password":"Conductor2025"}
-- POST /analytics/track   {"type":"deck_open","id":"demo","email":"x@y.com"}
+## What you get
+- Password gate: `POST /deck/unlock`
+- Analytics tracking: `POST /analytics/track` → persists to Postgres
+- Export: `GET /events/export.csv`
+- Signed invites: `/invites/sign?email=&project_id=`, `/invites/verify?token=`
+- CORS allowlist, rate limiting, Sentry (optional)
 
-Deploy to Railway (via GitHub)
-1) Create a new empty GitHub repo.
-2) Upload **the contents** of this folder to the repo root and commit.
-3) Railway → New Project → Deploy from GitHub → select your repo.
-   - Builder: **Dockerfile**
-   - Root directory: `/`
-   - Start Command: leave **empty** (Docker CMD runs /start.sh)
-4) Open `/health` on your Railway URL.
+## Railway setup
+1) Add a **Postgres** database in Railway → note the `DATABASE_URL`.
+2) New service → Deploy this repo → Builder: Dockerfile → Root: `/` → Start Command: empty.
+3) Variables:
+```
+LIVE_DECK_PASSWORD=conductor2025
+DATABASE_URL=postgresql://...
+ALLOWED_ORIGINS=https://YOUR-NETLIFY-SITE.netlify.app
+JWT_SECRET=some-long-random
+```
+4) Deploy → `/health` should return ok.
 
-Env (Railway → Variables)
-- LIVE_DECK_PASSWORD=Conductor2025
-- (optional) GHL_INCOMING_WEBHOOK_URL, SHEET_ID, GOOGLE_SERVICE_ACCOUNT_JSON=/tmp/sa.json
-
-If using Google Sheets: add a File Secret with your service account JSON mounted at `/tmp/sa.json` or write it from a base64 var in a custom Start Command.
